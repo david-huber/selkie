@@ -8,32 +8,40 @@ describe 'Player' do
     end
   end
   
-  context 'can have zone' do
+  it 'responds to zones' do
+    player = TypicalPlayer.new
+    player.should respond_to :zones
+  end
+  
+  context 'has zone' do
     before :each do
       @player = TypicalPlayer.new
       class NotAZoneYet
       end
     end
-
-    it 'responds to zones' do
-      @player.should respond_to :zones
-    end
   
-    it 'can have a symbol zone' do
-      @player.has_zone :hand
+    it 'can handle a  symbol zone' do
+      zone = @player.has_zone :hand
       @player.zones.should have_key :hand
+      @player.zones[:hand].should be zone
+      @player.zones[:hand].should be_a_kind_of(Selkie::Zone)
     end
 
-    it 'can have a class zone' do
-      @player.has_zone NotAZoneYet
+    it 'can handle a class zone' do
+      zone = @player.has_zone NotAZoneYet
       @player.zones.should have_key :NotAZoneYet
-      @player.zones[:NotAZoneYet].should be_an_instance_of(NotAZoneYet)
+      @player.zones[:NotAZoneYet].should be_a_kind_of(Selkie::Zone)
+      @player.zones[:NotAZoneYet].should be_a_kind_of(NotAZoneYet)
+      @player.zones[:NotAZoneYet].should be zone
     end
 
-    it 'can have an instance zone' do
-      @player.has_zone :grave_yard, NotAZoneYet.new
+    it 'can handle an instance zone' do
+      zone = NotAZoneYet.new
+      @player.has_zone :grave_yard, zone 
       @player.zones.should have_key :grave_yard
       @player.zones[:grave_yard].should be_an_instance_of(NotAZoneYet)
+      @player.zones[:grave_yard].should be_a_kind_of(Selkie::Zone)
+      @player.zones[:grave_yard].should be zone
     end
   
     it 'raises an error when key is neither a symbol or class' do
@@ -44,7 +52,6 @@ describe 'Player' do
         @player.has_zone [], NotAZoneYet.new
       end.to raise_error(TypeError, "key must be a Symbol or Class")
     end
-    
   
   end
   

@@ -1,6 +1,8 @@
 source :rubygems
 source 'http://rubygems.org'
 
+gem 'activesupport', '3.2.6'
+
 group :development, :test do
   gem 'rspec', '2.11.0'
   gem 'rack-test', '0.6.1'

@@ -9,13 +9,17 @@ module Selkie
       @zones ||= {}
     end
 
-    def has_zone(key, zone=nil)
+    def has_zone(key, zone=BaseZone.new)
       raise TypeError, 'key must be a Symbol or Class' unless (key.kind_of? Symbol) || (key.kind_of? Class)
       if key.kind_of? Class
-        zones[key.to_s.to_sym] = key.new
+        zone = key.new
+        zone.extend Zone unless zone.kind_of? Zone
+        zones[key.to_s.to_sym] = zone
       else
         zones[key] = zone
+        zone.extend Zone unless zone.kind_of? Zone
       end
+      return zone
     end
 
     module ClassMethods
@@ -23,10 +27,8 @@ module Selkie
         include TurnMethods
       end
     end
-    
 
     module TurnMethods
-   
       def order
         return @order
       end
