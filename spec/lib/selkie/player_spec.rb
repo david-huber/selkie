@@ -27,6 +27,11 @@ describe 'Player' do
       @player.zones[:hand].should be_a_kind_of(Selkie::Zone)
     end
 
+    it 'ends up owning zone' do
+      zone = @player.has_zone :hand
+      zone.owner.should be @player
+    end
+
     it 'can handle a class zone' do
       zone = @player.has_zone NotAZoneYet
       @player.zones.should have_key :NotAZoneYet

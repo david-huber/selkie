@@ -1,3 +1,5 @@
+require 'selkie/zone'
+
 module Selkie
  
   module Player
@@ -9,17 +11,19 @@ module Selkie
       @zones ||= {}
     end
 
-    def has_zone(key, zone=BaseZone.new)
+    def has_zone(key, zone=nil)
       raise TypeError, 'key must be a Symbol or Class' unless (key.kind_of? Symbol) || (key.kind_of? Class)
       if key.kind_of? Class
         zone = key.new
         zone.extend Zone unless zone.kind_of? Zone
         zones[key.to_s.to_sym] = zone
       else
+        zone = BaseZone.new if zone == nil
         zones[key] = zone
         zone.extend Zone unless zone.kind_of? Zone
       end
-      return zone
+      zone.owned_by self
+      zone
     end
 
     module ClassMethods
@@ -30,7 +34,7 @@ module Selkie
 
     module TurnMethods
       def order
-        return @order
+        @order
       end
 
       def order=(value)
