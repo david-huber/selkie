@@ -32,4 +32,40 @@ describe 'game object actions' do
     end
 
   end
+
+  context 'with a targeted effect' do
+    before :each do
+      @minion = DummyClass.new()
+
+      @game_object.action :command do
+
+        targets 1 do |t| 
+          t.is_a? DummyClass 
+        end  
+
+        effect :commands do |target|
+          target.attacked = true
+        end      
+      end
+
+    end
+
+    it 'can target the minion' do
+      @game_object.command @minion
+      @minion.attacked.should == true
+    end
+  
+    it 'cannot target the minion twice' do
+      expect do
+        @game_object.command @minion, @minion
+      end.to raise_error(ArgumentError)
+    end
+  
+    it 'cannot target a number' do
+      expect do
+        @game_object.command 1000
+      end.to raise_error(ArgumentError)
+    end
+  
+  end
 end
