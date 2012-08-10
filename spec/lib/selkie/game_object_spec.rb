@@ -3,27 +3,32 @@ require 'selkie/game_object'
 
 describe 'game object actions' do
   
-  class DummyClass
-    include Selkie::GameObject
-    attr_accessor :attacked
-    def initialize
-      @attacked = false
-    end
-
-  end
 
   before :each do
-    @game_object = DummyClass.new()
   end
 
   context 'with just an effect' do
   
-    before :each do
-      @game_object.action :attack do
+    class DummyClass
+      include Selkie::GameObject
+    
+      attr_accessor :attacked
+      
+      def initialize
+        @attacked = false
+      end
+
+      action :attack do
         effect :attacks do
           @attacked = true
         end
       end
+    
+    end
+    
+    
+    before :each do
+      @game_object = DummyClass.new()
     end
 
     it 'can be performed to effect' do
@@ -34,20 +39,30 @@ describe 'game object actions' do
   end
 
   context 'with a targeted effect' do
-    before :each do
-      @minion = DummyClass.new()
+    
+    class SmarterClass
+      include Selkie::GameObject
+    
+      attr_accessor :attacked
 
-      @game_object.action :command do
+      def initialize
+        @attacked = false
+      end
 
+      action :command do
         targets 1 do |t| 
-          t.is_a? DummyClass 
+          t.is_a? SmarterClass 
         end  
 
         effect :commands do |target|
           target.attacked = true
         end      
       end
-
+    end
+    
+    before :each do
+      @game_object = SmarterClass.new()
+      @minion = SmarterClass.new()
     end
 
     it 'can target the minion' do
