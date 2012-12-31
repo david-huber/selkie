@@ -34,6 +34,17 @@ module Selkie
       end
     end
 
+    def ac
+      case @role
+      when :brute, :artillery
+        12 + @level
+      when :soldier
+        16 + @level
+      else
+        14 + @level
+      end 
+    end
+
     module ClassMethods
       def level(l, maker=nil)
         make_monster(maker) do |m|

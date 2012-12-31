@@ -73,6 +73,10 @@ describe 'Monster' do
     it 'has 51 hp' do
       @monster.hp.should be 51
     end
+
+    it 'has an ac of 17' do
+      @monster.ac.should be 17
+    end
   end
 
   context 'soldier level 15' do
@@ -91,6 +95,10 @@ describe 'Monster' do
 
     it 'has a role of soldier' do
       @monster.role.should be :soldier
+    end
+
+    it 'has an ac of 31' do
+      @monster.ac.should be 31
     end
   end
 
@@ -173,6 +181,25 @@ describe 'Monster' do
     it 'has one hit point' do
       @monster.hp.should be 1
     end
+
+    it 'has an ac of 36' do
+      @monster.ac.should be 36
+    end
+  end
+
+  context 'elite brute level 3' do
+    class EliteBruteLevel3 
+      include Selkie::Monster
+      elite brute level 3
+    end
+
+    before :each do
+      @monster = EliteBruteLevel3.new
+    end
+
+    it 'has an ac of 15' do
+      @monster.ac.should be 15
+    end
   end
 
   context 'standard brute level 17' do
@@ -195,6 +222,10 @@ describe 'Monster' do
 
     it 'has 204 hp' do
       @monster.hp.should be 204
+    end
+
+    it 'has an ac of 29' do
+
     end
   end
 
