@@ -43,6 +43,15 @@ module Selkie
         attack
       end
 
+      def area(attack)
+        attack.type = :area
+        attack
+      end
+
+      def close(attack)
+        attack.type = :close
+        attack
+      end
 
     end
 
@@ -72,7 +81,7 @@ module Selkie
       end
 
       def modifier
-        return @level + (@defense == :ac ? 5 : 3)
+        return @level + (@defense == :ac ? 5 : 3) - ((@type == :area or @type == :close) ? 2 : 0)
       end
 
     end
