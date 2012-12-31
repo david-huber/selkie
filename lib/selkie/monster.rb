@@ -45,6 +45,22 @@ module Selkie
       end 
     end
 
+    def fortitude
+      defense(:strength, :constitution)
+    end
+
+    def reflex
+      defense(:dexterity, :intelligence)
+    end
+
+    def will
+      defense(:wisdom, :charisma)
+    end
+
+    def defense(*abs)
+      12 + @level + (abs.map { |a| abilities[a] }.max - (13 + @level / 2)) / 2
+    end
+
     module ClassMethods
       def level(l, maker=nil)
         make_monster(maker) do |m|

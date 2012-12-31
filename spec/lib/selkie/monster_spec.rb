@@ -12,6 +12,12 @@ describe 'Monster' do
     monster.abilities[:charisma].should be charisma
   end
 
+  def verify_defenses(monster, fortitude, reflex, will)
+    monster.fortitude.should be fortitude
+    monster.reflex.should be reflex
+    monster.will.should be will
+  end
+
   def verifiy_ability_score_sums(monster)
       expectedSum = ((monster.level / 2 + 13) * 6) + 3
       abilitiesSum = 0
@@ -225,7 +231,11 @@ describe 'Monster' do
     end
 
     it 'has an ac of 29' do
+      @monster.ac.should be 29
+    end
 
+    it 'produces the correct defenses' do
+      verify_defenses(@monster, 30, 29, 29)
     end
   end
 
@@ -280,17 +290,25 @@ describe 'Monster' do
   end
 
   context 'pumping and dumping ability scores' do
+    class SmartGuy
+      include Selkie::Monster
+      controller level 28
+      pump :intelligence, 2.times
+      pump :dexterity
+      dump :strength
+      dump :wisdom, 2.times
+    end
+
+    before :each do
+      @monster = SmartGuy.new
+    end
+
     it 'sums to correct ammount and has right values' do
-      class SmartGuy
-        include Selkie::Monster
-        controller level 28
-        pump :intelligence, 2.times
-        pump :dexterity
-        dump :strength
-        dump :wisdom, 2.times
-      end
-      monster = SmartGuy.new
-      verify_ability_scores(monster, 26, 28, 27, 29, 25, 30)
+      verify_ability_scores(@monster, 26, 28, 27, 29, 25, 30)
+    end
+
+    it 'produces the correct defenses' do
+      verify_defenses(@monster, 40, 41, 41)
     end
   end
 
