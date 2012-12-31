@@ -6,7 +6,7 @@ describe 'Monster' do
   context 'skirmisher' do
     class Skirmisher
       include Selkie::Monster
-      skirmisher
+      skirmisher level 2
     end
 
     it 'has role of skirmisher' do
@@ -149,6 +149,23 @@ describe 'Monster' do
         standard soldier level 1
         standard lurker level 15
       end
+    end.to raise_error
+  end
+
+  it 'will not construct without a level and role' do
+    expect do
+      class NoLevel
+        include Selkie::Monster
+        elite artillery
+      end
+      monster = NoLevel.new()
+    end.to raise_error
+    expect do
+      class NoRole
+        include Selkie::Monster
+        level 13
+      end
+      monster = NoRole.new()
     end.to raise_error
   end
 

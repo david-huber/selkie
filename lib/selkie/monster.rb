@@ -7,9 +7,7 @@ module Selkie
     end
 
     def initialize
-      @level = self.class.maker.level
-      @role = self.class.maker.role
-      @threat = self.class.maker.threat
+      self.class.maker.generate(self)
     end
 
 
@@ -20,7 +18,6 @@ module Selkie
           m.threat ||= :standard
         end
       end
-
 
       #threat setters
       def elite(maker = nil)
@@ -90,6 +87,16 @@ module Selkie
 
     class MonsterMaker
       attr_accessor :level, :role, :threat
+
+      def generate(monster)
+        if not (@level and @threat and (@role or @threat == :minion))
+          raise "Cannot instantiate monsters without a level, role, and threat."
+        end
+        monster.level = @level
+        monster.role = @role
+        monster.threat = @threat
+
+      end
     end
 
   end
