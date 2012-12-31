@@ -1,6 +1,7 @@
 module Selkie
   module Monster
-    attr_accessor :level, :role, :threat
+    attr_accessor :level, :role, :threat    
+    attr_accessor :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma
 
     def self.included(base)
       base.extend ClassMethods
@@ -10,6 +11,9 @@ module Selkie
       self.class.maker.generate(self)
     end
 
+    def abilities
+      @abilities ||= {}
+    end
 
     module ClassMethods
       def level(l, maker=nil)
@@ -38,27 +42,27 @@ module Selkie
 
       #role setters
       def brute(maker = nil)
-        make_monster(maker) { |m| m.role = :brute }
+        make_monster(maker) { |m| m.set_role(:brute) }
       end
 
       def skirmisher(maker = nil)
-        make_monster(maker) { |m| m.role = :skirmisher }
+        make_monster(maker) { |m| m.set_role(:skirmisher) }
       end
 
       def soldier(maker = nil)
-        make_monster(maker) { |m| m.role = :soldier }
+        make_monster(maker) { |m| m.set_role(:soldier) }
       end
 
       def lurker(maker = nil)
-        make_monster(maker) { |m| m.role = :lurker }
+        make_monster(maker) { |m| m.set_role(:lurker) }
       end
 
       def controller(maker = nil)
-        make_monster(maker) { |m| m.role = :controller }
+        make_monster(maker) { |m| m.set_role(:controller) }
       end
 
       def artillery(maker = nil)
-        make_monster(maker) { |m| m.role = :artillery }
+        make_monster(maker) { |m| m.set_role(:artillery) }
       end
 
       def maker
@@ -79,7 +83,6 @@ module Selkie
         yield maker
         @maker
       end
-
     end
 
     module InstanceMethods
@@ -96,6 +99,42 @@ module Selkie
         monster.role = @role
         monster.threat = @threat
 
+        [:strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma].each do |ability|
+          monster.abilities[ability] = 13 + @level / 2 + get_ability_bonus(ability)
+        end
+      end
+
+      def set_role(role)
+        @role = role
+        if not @primary_ability
+          case role
+          when :soldier
+            @primary_ability = :strength
+          when :skirmisher
+            @primary_ability = :dexterity
+          when :brute
+            @primary_ability = :constitution
+          when :artillery
+            @primary_ability = :intelligence
+          when :lurker
+            @primary_ability = :wisdom
+          when :controller
+            @primary_ability = :charisma
+          else
+            if @threat == minion
+              @primary_ability = :strength
+            else
+              raise "Invalid role value."
+            end
+          end
+        end
+      end
+
+      private
+
+      def get_ability_bonus(ability)
+        return 3 if @primary_ability == ability
+        0
       end
     end
 

@@ -3,15 +3,31 @@ require 'selkie/monster'
 
 describe 'Monster' do
 
+  def verify_ability_scores(monster, strength, dexterity, constitution, intelligence, wisdom, charisma)
+    monster.abilities[:strength].should be strength
+    monster.abilities[:dexterity].should be dexterity
+    monster.abilities[:constitution].should be constitution
+    monster.abilities[:intelligence].should be intelligence
+    monster.abilities[:wisdom].should be wisdom
+    monster.abilities[:charisma].should be charisma
+  end
+
   context 'skirmisher' do
     class Skirmisher
       include Selkie::Monster
       skirmisher level 2
     end
 
+    before :each do
+      @monster = Skirmisher.new
+    end
+
     it 'has role of skirmisher' do
-      monster = Skirmisher.new
-      monster.role.should be :skirmisher
+      @monster.role.should be :skirmisher
+    end
+
+    it 'has the correct ability scores' do
+      verify_ability_scores(@monster, 14, 17, 14, 14, 14, 14)
     end
   end
 
@@ -35,6 +51,10 @@ describe 'Monster' do
 
     it 'has role of artillery' do
       @monster.role.should be :artillery
+    end
+
+    it 'has the correct ability scores' do
+      verify_ability_scores(@monster, 15, 15, 15, 18, 15, 15)
     end
   end
 
