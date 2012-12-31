@@ -25,19 +25,19 @@ module Selkie
 
       #threat setters
       def elite(maker = nil)
-        make_monster(maker) { |m| m.threat = :elite }
+        make_monster(maker) { |m| m.set_threat(:elite) }
       end
 
       def solo(maker = nil)
-        make_monster(maker) { |m| m.threat = :solo }
+        make_monster(maker) { |m| m.set_threat(:solo) }
       end
 
       def standard(maker = nil)
-        make_monster(maker) { |m| m.threat = :standard }
+        make_monster(maker) { |m| m.set_threat(:standard) }
       end
 
       def minion(maker = nil)
-        make_monster(maker) { |m| m.threat = :minion }
+        make_monster(maker) { |m| m.set_threat(:minion) }
       end
 
       #role setters
@@ -104,6 +104,13 @@ module Selkie
         end
       end
 
+      def set_threat(threat)
+        @threat = threat
+        if @threat == :minion and not @primary_ability
+          @primary_ability = :strength
+        end
+      end
+
       def set_role(role)
         @role = role
         if not @primary_ability
@@ -121,11 +128,7 @@ module Selkie
           when :controller
             @primary_ability = :charisma
           else
-            if @threat == minion
-              @primary_ability = :strength
-            else
-              raise "Invalid role value."
-            end
+            raise "Invalid role value."
           end
         end
       end

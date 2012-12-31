@@ -141,6 +141,9 @@ describe 'Monster' do
       @monster.role.should be nil
     end
 
+    it 'has the correct ability scores' do
+      verify_ability_scores(@monster, 27, 24, 24, 24, 24, 24)
+    end
   end
 
   context 'standard brute level 17' do
