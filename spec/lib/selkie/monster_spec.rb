@@ -192,4 +192,20 @@ describe 'Monster' do
     end.to raise_error
   end
 
+  context 'primary charisma skirmisher' do
+
+    it 'has the correct ability scores' do
+      class SuaveSkirmisher
+        include Selkie::Monster
+        skirmisher level 2
+        primary_ability :charisma
+      end
+
+      monster = SuaveSkirmisher.new
+      verify_ability_scores(monster, 14, 14, 14, 14, 14, 17)
+
+    end
+
+  end
+
 end

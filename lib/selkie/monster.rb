@@ -65,6 +65,12 @@ module Selkie
         make_monster(maker) { |m| m.set_role(:artillery) }
       end
 
+      #ability support
+      def primary_ability(ability)
+        modify_monster { |m| m.primary_ability = ability }
+      end
+
+      #maker support
       def maker
         @maker
       end
@@ -83,13 +89,21 @@ module Selkie
         yield maker
         @maker
       end
+
+      def modify_monster
+        raise "Cannot modify monster without a baseline." if not @maker
+        yield @maker
+      end
     end
+
+
 
     module InstanceMethods
     end
 
     class MonsterMaker
       attr_accessor :level, :role, :threat
+      attr_accessor :primary_ability
 
       def generate(monster)
         if not (@level and @threat and (@role or @threat == :minion))
