@@ -237,9 +237,6 @@ module Selkie
           end
         end
       end
-
-      private
     end
-
   end
 end

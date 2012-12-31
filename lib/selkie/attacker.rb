@@ -1,12 +1,14 @@
 module Selkie
   module Attacker
+    #attackers must implement the following methods:
+    #level - returns the attacker's level.  It has to be set before
 
     def self.included(base)
       base.extend ClassMethods
     end
 
     def attacks
-      self.class.attacks
+      @attacks ||= self.class.attacks.map { |a| a.at_level(level) }
     end
 
     module ClassMethods
@@ -46,7 +48,16 @@ module Selkie
 
     class Attack
 
-      attr_accessor :defense, :type
+      attr_accessor :defense, :type, :level
+
+      def at_level(lvl)
+        leveled = Attack.new()
+        leveled.defense = @defense
+        leveled.type = @type
+        leveled.level = lvl
+        leveled.make_basic if is_basic?
+        leveled
+      end
 
       def initialize
         @is_basic = false
@@ -58,6 +69,10 @@ module Selkie
 
       def make_basic
         @is_basic = true
+      end
+
+      def modifier
+        return @level + (@defense == :ac ? 5 : 3)
       end
 
     end
