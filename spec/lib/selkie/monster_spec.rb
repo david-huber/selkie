@@ -285,7 +285,9 @@ describe 'Monster' do
         soldier level 10
         randomize_abilities
       end
-      verifiy_ability_score_sums RandomGuy.new
+      100.times.each do
+        verifiy_ability_score_sums RandomGuy.new
+      end
     end
   end
 
