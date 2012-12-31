@@ -12,6 +12,15 @@ describe 'Monster' do
     monster.abilities[:charisma].should be charisma
   end
 
+  def verifiy_ability_score_sums(monster)
+      expectedSum = ((monster.level / 2 + 13) * 6) + 3
+      abilitiesSum = 0
+      [:strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma].each do |ability| 
+        abilitiesSum += monster.abilities[ability]
+      end
+      abilitiesSum.should be expectedSum
+  end
+
   context 'skirmisher' do
     class Skirmisher
       include Selkie::Monster
@@ -193,19 +202,41 @@ describe 'Monster' do
   end
 
   context 'primary charisma skirmisher' do
-
     it 'has the correct ability scores' do
       class SuaveSkirmisher
         include Selkie::Monster
         skirmisher level 2
         primary_ability :charisma
       end
-
       monster = SuaveSkirmisher.new
       verify_ability_scores(monster, 14, 14, 14, 14, 14, 17)
-
     end
+  end
 
+  context 'randomizing abilities' do
+    it 'sums to correct ammount' do
+      class RandomGuy
+        include Selkie::Monster
+        soldier level 10
+        randomize_abilities
+      end
+      verifiy_ability_score_sums RandomGuy.new
+    end
+  end
+
+  context 'pumping and dumping ability scores' do
+    it 'sums to correct ammount and has right values' do
+      class SmartGuy
+        include Selkie::Monster
+        controller level 28
+        pump :intelligence, 2.times
+        pump :dexterity
+        dump :strength
+        dump :wisdom, 2.times
+      end
+      monster = SmartGuy.new
+      verify_ability_scores(monster, 26, 28, 27, 29, 25, 30)
+    end
   end
 
 end

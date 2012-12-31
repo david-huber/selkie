@@ -25,49 +25,67 @@ module Selkie
 
       #threat setters
       def elite(maker = nil)
-        make_monster(maker) { |m| m.set_threat(:elite) }
+        make_monster(maker) { |m| m.set_threat!(:elite) }
       end
 
       def solo(maker = nil)
-        make_monster(maker) { |m| m.set_threat(:solo) }
+        make_monster(maker) { |m| m.set_threat!(:solo) }
       end
 
       def standard(maker = nil)
-        make_monster(maker) { |m| m.set_threat(:standard) }
+        make_monster(maker) { |m| m.set_threat!(:standard) }
       end
 
       def minion(maker = nil)
-        make_monster(maker) { |m| m.set_threat(:minion) }
+        make_monster(maker) { |m| m.set_threat!(:minion) }
       end
 
       #role setters
       def brute(maker = nil)
-        make_monster(maker) { |m| m.set_role(:brute) }
+        make_monster(maker) { |m| m.set_role!(:brute) }
       end
 
       def skirmisher(maker = nil)
-        make_monster(maker) { |m| m.set_role(:skirmisher) }
+        make_monster(maker) { |m| m.set_role!(:skirmisher) }
       end
 
       def soldier(maker = nil)
-        make_monster(maker) { |m| m.set_role(:soldier) }
+        make_monster(maker) { |m| m.set_role!(:soldier) }
       end
 
       def lurker(maker = nil)
-        make_monster(maker) { |m| m.set_role(:lurker) }
+        make_monster(maker) { |m| m.set_role!(:lurker) }
       end
 
       def controller(maker = nil)
-        make_monster(maker) { |m| m.set_role(:controller) }
+        make_monster(maker) { |m| m.set_role!(:controller) }
       end
 
       def artillery(maker = nil)
-        make_monster(maker) { |m| m.set_role(:artillery) }
+        make_monster(maker) { |m| m.set_role!(:artillery) }
       end
 
       #ability support
       def primary_ability(ability)
         modify_monster { |m| m.primary_ability = ability }
+      end
+
+      def randomize_abilities
+        modify_monster { |m| m.random_ability_modifiers = true }
+      end
+
+      def pump(attribute, times=nil)
+        times = 1.times if not times          
+        times.each do
+          modify_monster { |m| m.ability_mods[attribute] = (m.ability_mods[attribute] or 0) +1 }
+        end
+      end
+
+      def dump(attribute, times=nil)
+        times = 1.times if not times          
+        times.each do
+          modify_monster { |m| m.ability_mods[attribute] = (m.ability_mods[attribute] or 0) -1 }
+        end
       end
 
       #maker support
@@ -96,14 +114,15 @@ module Selkie
       end
     end
 
-
-
-    module InstanceMethods
-    end
-
     class MonsterMaker
       attr_accessor :level, :role, :threat
       attr_accessor :primary_ability
+      attr_accessor :random_ability_modifiers
+
+      def ability_mods
+        @ability_mods ||= {}
+      end
+
 
       def generate(monster)
         if not (@level and @threat and (@role or @threat == :minion))
@@ -113,19 +132,33 @@ module Selkie
         monster.role = @role
         monster.threat = @threat
 
-        [:strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma].each do |ability|
-          monster.abilities[ability] = 13 + @level / 2 + get_ability_bonus(ability)
+        generate_abilities monster
+      end
+
+      def generate_abilities(monster)
+        abilities = [:strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma]
+        primary_index = abilities.index(@primary_ability)
+        spread = [0, 0, 0, 0, 0].insert(primary_index, 3)
+        if @random_ability_modifiers
+          spread = [[2, 0, 0, 0, -2], [1, 0, 0, 0, -1], 
+              [1, 1, 0, 0, -2], [2, 0, 0, -1, -1], 
+              [1, 1, 0, -1, -1], [2, 1, 0, -1, -2]].shuffle()[0].shuffle().insert(primary_index, 3)
+        end
+        ability_mods.each { |k, v| spread[abilities.index(k)] += v }
+        abilities.each_index do |index|
+          ability = abilities[index]
+          monster.abilities[ability] = 13 + @level / 2 + spread[index]
         end
       end
 
-      def set_threat(threat)
+      def set_threat!(threat)
         @threat = threat
         if @threat == :minion and not @primary_ability
           @primary_ability = :strength
         end
       end
 
-      def set_role(role)
+      def set_role!(role)
         @role = role
         if not @primary_ability
           case role
@@ -148,11 +181,6 @@ module Selkie
       end
 
       private
-
-      def get_ability_bonus(ability)
-        return 3 if @primary_ability == ability
-        0
-      end
     end
 
   end
