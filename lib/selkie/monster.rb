@@ -1,5 +1,9 @@
+require 'selkie/attacker'
+
 module Selkie
   module Monster
+    include Selkie::Attacker
+
     attr_accessor :level, :role, :threat    
 
     def self.included(base)
@@ -188,12 +192,14 @@ module Selkie
         if @random_ability_modifiers
           spread = [[2, 0, 0, 0, -2], [1, 0, 0, 0, -1], 
               [1, 1, 0, 0, -2], [2, 0, 0, -1, -1], 
+              [1, 1, 1, -1, -2], [4, 0, 0, -2, -2],
               [1, 1, 0, -1, -1], [2, 1, 0, -1, -2],
               [3, 2, 0, -2, -3], [2, 2, 0, -2, -2],
               [3, 2, 0, -2, -3], [4, 3, 0, -3, -4],
               [4, 2, 2, -3, -5], [3, 3, -3, -2, -1],
               [4, 3, 3, -5, -5], [4, 4, 3, -6, -5],
-              [5, 4, -4, -3, -2], [5, 5, -2, -3, -5]].shuffle()[0].shuffle()
+              [5, 4, -4, -3, -2], [5, 5, -2, -3, -5],
+              [6, 4, -2, -4, -4], [6, 5, -3, -4, -4]].shuffle()[0].shuffle()
         end
         spread = spread.insert(primary_index, 3)
         ability_mods.each { |k, v| spread[abilities.index(k)] += v }
