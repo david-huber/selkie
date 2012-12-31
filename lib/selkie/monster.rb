@@ -1,7 +1,6 @@
 module Selkie
   module Monster
     attr_accessor :level, :role, :threat    
-    attr_accessor :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma
 
     def self.included(base)
       base.extend ClassMethods
@@ -13,6 +12,26 @@ module Selkie
 
     def abilities
       @abilities ||= {}
+    end
+
+    def hp
+      if @threat == :minion
+        1
+      else
+        multiplier = 8
+        if @threat != :solo
+          multiplier = 10 if @role == :brute
+          multiplier = 6 if @role == :lurker || @role == :artillery
+        end
+        base = multiplier * (1 + @level) + abilities[:constitution]
+        if @threat == :solo
+          base * 4
+        elsif @threat == :elite
+          base * 2
+        else
+          base
+        end
+      end
     end
 
     module ClassMethods
@@ -138,12 +157,13 @@ module Selkie
       def generate_abilities(monster)
         abilities = [:strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma]
         primary_index = abilities.index(@primary_ability)
-        spread = [0, 0, 0, 0, 0].insert(primary_index, 3)
+        spread = [0, 0, 0, 0, 0]
         if @random_ability_modifiers
           spread = [[2, 0, 0, 0, -2], [1, 0, 0, 0, -1], 
               [1, 1, 0, 0, -2], [2, 0, 0, -1, -1], 
-              [1, 1, 0, -1, -1], [2, 1, 0, -1, -2]].shuffle()[0].shuffle().insert(primary_index, 3)
+              [1, 1, 0, -1, -1], [2, 1, 0, -1, -2]].shuffle()[0].shuffle()
         end
+        spread = spread.insert(primary_index, 3)
         ability_mods.each { |k, v| spread[abilities.index(k)] += v }
         abilities.each_index do |index|
           ability = abilities[index]

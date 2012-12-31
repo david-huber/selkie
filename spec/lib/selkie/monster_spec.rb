@@ -38,6 +38,10 @@ describe 'Monster' do
     it 'has the correct ability scores' do
       verify_ability_scores(@monster, 14, 17, 14, 14, 14, 14)
     end
+
+    it 'has 38 hp' do
+      @monster.hp.should be 38
+    end
   end
 
   context 'artillery level 5' do
@@ -64,6 +68,10 @@ describe 'Monster' do
 
     it 'has the correct ability scores' do
       verify_ability_scores(@monster, 15, 15, 15, 18, 15, 15)
+    end
+
+    it 'has 51 hp' do
+      @monster.hp.should be 51
     end
   end
 
@@ -107,6 +115,10 @@ describe 'Monster' do
     it 'has a role of lurker' do
       @monster.role.should be :lurker
     end
+
+    it 'has 142 hp' do
+      @monster.hp.should be 142
+    end
   end
 
   context 'controller level 4 solo' do
@@ -129,6 +141,10 @@ describe 'Monster' do
 
     it 'has a role of controller' do
       @monster.role.should be :controller
+    end
+
+    it 'has hp' do
+      @monster.hp.should be 220
     end
   end
 
@@ -153,6 +169,10 @@ describe 'Monster' do
     it 'has the correct ability scores' do
       verify_ability_scores(@monster, 27, 24, 24, 24, 24, 24)
     end
+
+    it 'has one hit point' do
+      @monster.hp.should be 1
+    end
   end
 
   context 'standard brute level 17' do
@@ -171,6 +191,10 @@ describe 'Monster' do
 
     it 'has a role of brute' do
       @monster.role.should be :brute
+    end
+
+    it 'has 204 hp' do
+      @monster.hp.should be 204
     end
   end
 
