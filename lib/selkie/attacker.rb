@@ -1,3 +1,5 @@
+require 'selkie/dice'
+
 module Selkie
   module Attacker
     #attackers must implement the following methods:
@@ -52,7 +54,6 @@ module Selkie
         attack.type = :close
         attack
       end
-
     end
 
     class Attack
@@ -82,6 +83,28 @@ module Selkie
 
       def modifier
         return @level + (@defense == :ac ? 5 : 3) - ((@type == :area or @type == :close) ? 2 : 0)
+      end
+
+      def damage
+        case @level
+        when 1..3
+          dice = 1
+          sides = 8
+          bonus = @level + 3
+        when 4..10
+          dice = 2
+          sides = @level > 6 ? 8 : 6
+          bonus = @level - sides + 7
+        when 11..20
+          dice = 3
+          sides = @level > 15 ? 8 : 6
+          bonus = @level > 15 ? level - 5 : level - 2
+        else
+          dice = 4
+          sides = @level > 25 ? 8 : 6
+          bonus = @level > 25 ? level - 10 : level - 6
+        end
+        return dice.d(sides).plus(bonus)
       end
 
     end
