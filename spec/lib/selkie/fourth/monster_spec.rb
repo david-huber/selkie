@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'selkie/monster'
+require 'selkie/fourth/monster'
 
 describe 'Monster' do
 

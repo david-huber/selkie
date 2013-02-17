@@ -1,4 +1,4 @@
-require 'selkie/attacker'
+require 'selkie/fourth/attacker'
 
 module Selkie
   module Monster

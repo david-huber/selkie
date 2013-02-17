@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'selkie/attacker'
+require 'selkie/fourth/attacker'
 require 'selkie/dice'
 
 
